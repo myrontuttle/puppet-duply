@@ -1,0 +1,23 @@
+#!/bin/sh
+
+MYSQLTMPDIR="<%= db_backup_folder =>"
+MYSQL="$(which mysql)"
+MYSQLDUMP="$(which mysqldump)"
+$MUSER = <%= mysql_user =>
+$MPASS = <%= mysql_pass =>
+$MHOST = <%= mysql_host =>
+ 
+if [[ -n "$MYSQL" || -n "$MYSQL" || -n "$MYSQLDUMP" ]]; then
+  echo "Not all MySQL commands found."
+  exit 2
+fi
+
+# Get all databases name
+DBS="$($MYSQL -u $MUSER -h $MHOST <% if @mysql_pass %>-p$MPASS<% end %> -Bse 'show databases' -s --skip-column-names)"
+for db in $DBS
+do
+  if [ "$db" != "information_schema" ]; then
+    $MYSQLDUMP -u $MUSER -h $MHOST -p$MPASS $db > $MYSQLTMPDIR/mysql-$dbl
+    sleep 10;
+  fi
+done

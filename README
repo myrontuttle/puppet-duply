@@ -1,3 +1,50 @@
 Puppet Duply Module
 
 This is a puppet module to manage backups using Duply
+
+Parameters:
+
+	$version = ['latest' | 'present']
+	$backend = ['file' | 'ftp' | 's3' | 's3+http' ]
+	$destination is backup destination URI (without the backend scheme)
+	$gpg_key = 'disabled' - disables encryption alltogether
+  		$gpg_key = '<key1>[,<key2>]'; 
+		$gpg_password = 'pass' - encrypt with keys, sign with key1 if secret key 
+								available and use $gpg_password for sign & decrypt
+	$gpg_password = 'passphrase' - symmetric encryption using passphrase only
+	$backend_user = Backend username
+	$backend_pass = Backend password
+	$backup_filelist = a globbing list of included or excluded files/folders 
+						using '+' and '-'. Leave undefined to backup everything
+						add a '- **' line to exclude everything not explicitly included
+						make sure there is no whitespace at the beginning of lines
+	$max_age = timeframe for keeping old backups
+	$max_full_backups = Number of full backups to keep
+	$max_fullbkp_age = forces a full backup if last full backup reaches a specified age
+	$volsize = set the size of backup chunks to VOLSIZE MB
+	$add_options = more duplicity command line options. Leave a separating space char at the end
+	$mysql = [true | false] backup MySQL database
+	$mysql_user = user to connect to MySQL database
+	$mysql_pass = password to connect to MySQL database
+	$mysql_host = MySQL database host
+	$db_backup_folder = folder to use for temporary database dumps
+	$automate = [true | false] schedule backup job using cron
+	$minute, $hour, $monthday, $month = when backups will occur (default everyday at 1:05 AM
+
+Actions:
+	- Installs duply, duplicity, and necessary packages based on storage backend
+	- Backs up selected files and all MySQL databases
+
+Requires: None
+
+Sample Usage:
+
+  class { 'duply': 
+	 backend => 's3+http',
+	 destination => 'com.yoursite.yourbucket',
+	 backend_user => 'Your AWS Access ID',
+	 backend_pass => 'Your AWS Secret Access Key',
+    backup_filelist => '+ /etc
+	+ /home
+	- **'
+  }
