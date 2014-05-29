@@ -59,6 +59,7 @@ class duply (
 	$backend_user = undef,
 	$backend_pass = undef,
 	$backup_filelist = undef,
+	$source = '/',
 	$max_age = '3M',
 	$max_full_backups = '1',
 	$max_fullbkp_age = '1M',
