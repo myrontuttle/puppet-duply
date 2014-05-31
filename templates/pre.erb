@@ -1,13 +1,13 @@
 #!/bin/sh
 
-MYSQLTMPDIR="<%= db_backup_folder =>"
-MYSQL="$(which mysql)"
-MYSQLDUMP="$(which mysqldump)"
-$MUSER = <%= mysql_user =>
-$MPASS = <%= mysql_pass =>
-$MHOST = <%= mysql_host =>
+MYSQLTMPDIR="<%= @db_backup_folder %>"
+MYSQL=$(which mysql)
+MYSQLDUMP=$(which mysqldump)
+MUSER="<%= @mysql_user %>"
+MPASS="<%= @mysql_pass %>"
+MHOST="<%= @mysql_host %>"
  
-if [[ -n "$MYSQL" || -n "$MYSQL" || -n "$MYSQLDUMP" ]]; then
+if ! [[ -n $MYSQL || -n $MYSQLDUMP ]]; then
   echo "Not all MySQL commands found."
   exit 2
 fi
@@ -17,7 +17,7 @@ DBS="$($MYSQL -u $MUSER -h $MHOST <% if @mysql_pass %>-p$MPASS<% end %> -Bse 'sh
 for db in $DBS
 do
   if [ "$db" != "information_schema" ]; then
-    $MYSQLDUMP -u $MUSER -h $MHOST -p$MPASS $db > $MYSQLTMPDIR/mysql-$dbl
+    $MYSQLDUMP -u $MUSER -h $MHOST -p$MPASS $db | bzcat -zc > $MYSQLTMPDIR/mysql-$db.sql.bz2
     sleep 10;
   fi
 done
